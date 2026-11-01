@@ -29,69 +29,94 @@
     </div>
 
     <script>
+        // let questions = [];
+        // let currentIdx = 0;
+        // let score = 0;
+
+        // const defaultQuestions = [
+        //     { question: 'Con gì kêu "mèo méo meo"?', option_a: 'Con chó', option_b: 'Con mèo', option_c: 'Con thỏ', correct_option: 'option_b' },
+        //     { question: 'Quả dưa hấu ruột màu gì?', option_a: 'Màu đỏ', option_b: 'Màu xanh', option_c: 'Màu vàng', correct_option: 'option_a' }
+        // ];
+
+        // window.onload = function() {
+        //     let saved = localStorage.getItem('local_quiz_db');
+        //     if (!saved) {
+        //         questions = [...defaultQuestions];
+        //         localStorage.setItem('local_quiz_db', JSON.stringify(questions));
+        //     } else {
+        //         questions = JSON.parse(saved);
+        //     }
+        //     questions.sort(() => Math.random() - 0.5);
+        //     showQuestion();
+        // };
+
+        // function showQuestion() {
+        //     const qText = document.getElementById('question-text');
+        //     const optBox = document.getElementById('options-box');
+        //     const feedback = document.getElementById('feedback');
+        //     feedback.innerText = '';
+
+        //     if (questions.length === 0) {
+        //         qText.innerText = "Chưa có câu hỏi nào. Bố mẹ hãy vào mục Quản lý để thêm câu hỏi nhé!";
+        //         optBox.innerHTML = '';
+        //         return;
+        //     }
+
+        //     if (currentIdx >= questions.length) {
+        //         document.getElementById('quiz-box').innerHTML = `
+        //             <h2 style="color: #2ecc71; margin-top:0;">🎉 BÉ HOÀN THÀNH XUẤT SẮC! 🎉</h2>
+        //             <p style="font-size: 18px; font-weight:bold; color:#555;">Bé trả lời đúng được ${score} / ${questions.length} câu hỏi!</p>
+        //             <button class="btn-opt" style="background-color: #2ecc71; color: white; box-shadow: 0 4px #27ae60;" onclick="location.reload()">Chơi Lại Vòng Mới</button>
+        //         `;
+        //         return;
+        //     }
+
+        //     const q = questions[currentIdx];
+        //     qText.innerText = `Câu ${currentIdx + 1}: ${q.question}`;
+        //     optBox.innerHTML = `
+        //         <button class="btn-opt" onclick="checkAnswer('option_a')">A. ${q.option_a}</button>
+        //         <button class="btn-opt" onclick="checkAnswer('option_b')">B. ${q.option_b}</button>
+        //         <button class="btn-opt" onclick="checkAnswer('option_c')">C. ${q.option_c}</button>
+        //     `;
+        // }
+
+        // function checkAnswer(selected) {
+        //     const q = questions[currentIdx];
+        //     const feedback = document.getElementById('feedback');
+        //     document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
+
+        //     if (selected === q.correct_option) {
+        //         feedback.style.color = '#2ecc71'; feedback.innerText = 'Đúng rồi! Bé giỏi quá! 🎈'; score++;
+        //     } else {
+        //         feedback.style.color = '#e74c3c'; feedback.innerText = 'Chưa đúng rồi bé ơi! ❤️';
+        //     }
+        //     setTimeout(() => { currentIdx++; showQuestion(); }, 1500);
+        // }
+
+        // Đọc trực tiếp file questions.json nằm chung thư mục trên GitHub Pages
+        const GITHUB_RAW_URL = "questions.json";
+
         let questions = [];
         let currentIdx = 0;
         let score = 0;
 
-        const defaultQuestions = [
-            { question: 'Con gì kêu "mèo méo meo"?', option_a: 'Con chó', option_b: 'Con mèo', option_c: 'Con thỏ', correct_option: 'option_b' },
-            { question: 'Quả dưa hấu ruột màu gì?', option_a: 'Màu đỏ', option_b: 'Màu xanh', option_c: 'Màu vàng', correct_option: 'option_a' }
-        ];
-
-        window.onload = function() {
-            let saved = localStorage.getItem('local_quiz_db');
-            if (!saved) {
-                questions = [...defaultQuestions];
-                localStorage.setItem('local_quiz_db', JSON.stringify(questions));
-            } else {
-                questions = JSON.parse(saved);
+        window.onload = async function() {
+            try {
+                // Thêm '?t=' + thời gian để ép trình duyệt luôn lấy file mới nhất từ GitHub, không dùng file cache cũ
+                const res = await fetch(GITHUB_RAW_URL + '?t=' + new Date().getTime());
+                if (!res.ok) throw new Error("Không thể tải file câu hỏi từ GitHub");
+                
+                questions = await res.json();
+                
+                // Tráo ngẫu nhiên thứ tự câu hỏi cho bé
+                questions.sort(() => Math.random() - 0.5);
+                showQuestion();
+            } catch (err) {
+                document.getElementById('question-text').innerText = "❌ Lỗi: Không thể đọc file questions.json trên GitHub! Bạn hãy kiểm tra lại file xem đã upload lên chưa nhé.";
+                console.error(err);
             }
-            questions.sort(() => Math.random() - 0.5);
-            showQuestion();
         };
 
-        function showQuestion() {
-            const qText = document.getElementById('question-text');
-            const optBox = document.getElementById('options-box');
-            const feedback = document.getElementById('feedback');
-            feedback.innerText = '';
-
-            if (questions.length === 0) {
-                qText.innerText = "Chưa có câu hỏi nào. Bố mẹ hãy vào mục Quản lý để thêm câu hỏi nhé!";
-                optBox.innerHTML = '';
-                return;
-            }
-
-            if (currentIdx >= questions.length) {
-                document.getElementById('quiz-box').innerHTML = `
-                    <h2 style="color: #2ecc71; margin-top:0;">🎉 BÉ HOÀN THÀNH XUẤT SẮC! 🎉</h2>
-                    <p style="font-size: 18px; font-weight:bold; color:#555;">Bé trả lời đúng được ${score} / ${questions.length} câu hỏi!</p>
-                    <button class="btn-opt" style="background-color: #2ecc71; color: white; box-shadow: 0 4px #27ae60;" onclick="location.reload()">Chơi Lại Vòng Mới</button>
-                `;
-                return;
-            }
-
-            const q = questions[currentIdx];
-            qText.innerText = `Câu ${currentIdx + 1}: ${q.question}`;
-            optBox.innerHTML = `
-                <button class="btn-opt" onclick="checkAnswer('option_a')">A. ${q.option_a}</button>
-                <button class="btn-opt" onclick="checkAnswer('option_b')">B. ${q.option_b}</button>
-                <button class="btn-opt" onclick="checkAnswer('option_c')">C. ${q.option_c}</button>
-            `;
-        }
-
-        function checkAnswer(selected) {
-            const q = questions[currentIdx];
-            const feedback = document.getElementById('feedback');
-            document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
-
-            if (selected === q.correct_option) {
-                feedback.style.color = '#2ecc71'; feedback.innerText = 'Đúng rồi! Bé giỏi quá! 🎈'; score++;
-            } else {
-                feedback.style.color = '#e74c3c'; feedback.innerText = 'Chưa đúng rồi bé ơi! ❤️';
-            }
-            setTimeout(() => { currentIdx++; showQuestion(); }, 1500);
-        }
     </script>
 </body>
 </html>
