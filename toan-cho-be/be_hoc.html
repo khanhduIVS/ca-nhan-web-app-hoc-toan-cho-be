@@ -10,7 +10,7 @@
         .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border: 3px solid #ffde59; margin-top: 15px; }
         h1 { color: #ff6b6b; margin-top: 10px; font-size: 24px; }
         #question-text { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 25px; min-height: 60px; }
-        .btn-opt { display: block; width: 100%; margin: 15px 0; padding: 18px; font-size: 18px; border: none; border-radius: 12px; background-color: #ffeaa7; color: #2d3436; cursor: pointer; font-weight: bold; box-shadow: 0 4px #f1c40f; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
+        .btn-opt { display: block; width: 100%; margin: 15px 0; padding: 18px; font-size: 18px; border: none; border-radius: 12px; background-color: #ffeaa7; color: #2d3436; cursor: pointer; font-weight: bold; box-shadow: 0 4px #f1c40f; transition: transform 0.1s; }
         .btn-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px #f1c40f; }
         .btn-opt:disabled { background-color: #dfe6e9; box-shadow: none; color: #b2bec3; }
         #feedback { font-size: 22px; font-weight: bold; margin-top: 20px; height: 30px; }
@@ -18,16 +18,13 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>🌟 BÉ THỬ TÀI ĐỐ VUI 🌟</h1>
-        
         <div class="card" id="quiz-box">
             <p id="question-text">Đang chuẩn bị câu hỏi...</p>
             <div id="options-box"></div>
             <p id="feedback"></p>
         </div>
-        
         <a href="index.html" class="back-btn">🏠 Quay lại Trang Chủ</a>
     </div>
 
@@ -49,7 +46,6 @@
             } else {
                 questions = JSON.parse(saved);
             }
-            // Tráo ngẫu nhiên thứ tự xuất hiện câu hỏi
             questions.sort(() => Math.random() - 0.5);
             showQuestion();
         };
@@ -61,7 +57,7 @@
             feedback.innerText = '';
 
             if (questions.length === 0) {
-                qText.innerText = "Chưa có câu hỏi nào. Bố mẹ hãy vào mục Quản lý để thêm câu hỏi cho bé nhé!";
+                qText.innerText = "Chưa có câu hỏi nào. Bố mẹ hãy vào mục Quản lý để thêm câu hỏi nhé!";
                 optBox.innerHTML = '';
                 return;
             }
@@ -90,12 +86,9 @@
             document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
 
             if (selected === q.correct_option) {
-                feedback.style.color = '#2ecc71';
-                feedback.innerText = 'Đúng rồi! Bé giỏi quá! 🎈';
-                score++;
+                feedback.style.color = '#2ecc71'; feedback.innerText = 'Đúng rồi! Bé giỏi quá! 🎈'; score++;
             } else {
-                feedback.style.color = '#e74c3c';
-                feedback.innerText = 'Chưa đúng rồi bé ơi! ❤️';
+                feedback.style.color = '#e74c3c'; feedback.innerText = 'Chưa đúng rồi bé ơi! ❤️';
             }
             setTimeout(() => { currentIdx++; showQuestion(); }, 1500);
         }

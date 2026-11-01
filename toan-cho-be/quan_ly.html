@@ -5,52 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Câu Hỏi</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f6fa; padding: 15px; margin: 0; color: #333; }
-        .wrapper { max-width: 550px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-top: 0; font-size: 20px; }
-        .form-group { text-align: left; margin-bottom: 12px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
-        .btn-add { background-color: #2ecc71; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; }
-        .q-item { background: #f8f9fa; padding: 12px; border-left: 4px solid #3498db; margin-bottom: 8px; border-radius: 0 6px 6px 0; text-align: left; position: relative; }
-        .btn-delete { position: absolute; right: 10px; top: 12px; background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .back-btn { display: inline-block; margin-bottom: 15px; color: #3498db; text-decoration: none; font-weight: bold; font-size: 15px; }
+        :root { --primary-color: #4a90e2; --success-color: #2ecc71; --danger-color: #e74c3c; --bg-color: #f4f7f6; --card-bg: #ffffff; --text-main: #2c3e50; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-main); }
+        .header-bar { max-width: 1100px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; }
+        .back-btn { background-color: #ffffff; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 10px 18px; font-size: 14px; font-weight: bold; border-radius: 8px; text-decoration: none; }
+        .dashboard { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        @media (max-width: 850px) { .dashboard { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        h2 { margin-top: 0; margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid #eaeded; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #7f8c8d; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccd1d1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .btn { color: white; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 5px; }
+        .btn-add { background-color: var(--success-color); width: 100%; padding: 14px; font-size: 15px; }
+        .btn-blue { background-color: var(--primary-color); }
+        .btn-orange { background-color: #e67e22; }
+        .questions-scroll { max-height: 400px; overflow-y: auto; }
+        .q-item { background: #f8f9f9; padding: 15px; margin-bottom: 12px; border-radius: 10px; border-left: 4px solid var(--primary-color); position: relative; }
+        .btn-delete { position: absolute; right: 15px; top: 15px; background: transparent; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .notepad-panel { max-width: 1100px; margin: 25px auto 0 auto; }
     </style>
 </head>
 <body>
+    <div class="header-bar">
+        <div style="font-size: 20px; font-weight: bold;">⚙️ BẢNG QUẢN LÝ (KHÔNG CÀI THƯ VIỆN)</div>
+        <a href="index.html" class="back-btn">🏠 Quay lại Trang Chủ</a>
+    </div>
 
-    <div class="wrapper">
-        <a href="index.html" class="back-btn">← Quay lại Trang Chủ</a>
-        <h2>⚙️ Quản Lý Kho Câu Hỏi</h2>
+    <div class="dashboard">
+        <!-- CỘT 1: THÊM CÂU HỎI -->
+        <div class="card">
+            <h2>📝 Tạo Câu Hỏi Mới</h2>
+            <div class="form-group"><label>Nội dung câu hỏi:</label><input type="text" id="add-q" placeholder="Ví dụ: 1 + 1 bằng mấy?"></div>
+            <div class="form-group"><label>Đáp án A:</label><input type="text" id="add-a" placeholder="Phương án A"></div>
+            <div class="form-group"><label>Đáp án B:</label><input type="text" id="add-b" placeholder="Phương án B"></div>
+            <div class="form-group"><label>Đáp án C:</label><input type="text" id="add-c" placeholder="Phương án C"></div>
+            <div class="form-group"><label>Đáp án đúng:</label>
+                <select id="add-correct">
+                    <option value="option_a">Đáp án A</option>
+                    <option value="option_b">Đáp án B</option>
+                    <option value="option_c">Đáp án C</option>
+                </select>
+            </div>
+            <button class="btn btn-add" onclick="addNewQuestion()">💾 Lưu Lên Hệ Thống Web</button>
+        </div>
         
-        <div class="form-group">
-            <label>Nội dung câu hỏi:</label>
-            <input type="text" id="add-q" placeholder="Ví dụ: 1 cộng 1 bằng mấy?">
+        <!-- CỘT 2: DANH SÁCH -->
+        <div class="card">
+            <h2>🗂️ Danh Sách Hiện Có (<span id="q-count">0</span>)</h2>
+            <div class="questions-scroll" id="questions-list"></div>
         </div>
-        <div class="form-group">
-            <label>Đáp án A:</label>
-            <input type="text" id="add-a" placeholder="Nhập phương án A">
+    </div>
+
+    <!-- KHU VỰC KẾT NỐI VỚI FILE NOTEPAD -->
+    <div class="notepad-panel">
+        <div class="card" style="border: 2px dashed #bdc3c7;">
+            <h2>📋 Đồng Bộ Hóa Với File Notepad Của Bạn</h2>
+            <p style="font-size: 13px; color: #7f8c8d; margin-top:-10px;">Bạn có thể sao chép đoạn chữ dưới đây lưu vào file Notepad trên máy tính, hoặc dán chữ từ file Notepad vào đây để nạp câu hỏi.</p>
+            <div class="form-group">
+                <textarea id="notepad-area" rows="6" placeholder="Dữ liệu văn bản câu hỏi dạng chữ sẽ hiển thị ở đây..."></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-blue" onclick="copyToClipboard()">📋 1. Sao chép chữ để dán vào Notepad</button>
+                <button class="btn btn-orange" onclick="importFromNotepad()">📥 2. Nạp dữ liệu chữ từ Notepad vào Web</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Đáp án B:</label>
-            <input type="text" id="add-b" placeholder="Nhập phương án B">
-        </div>
-        <div class="form-group">
-            <label>Đáp án C:</label>
-            <input type="text" id="add-c" placeholder="Nhập phương án C">
-        </div>
-        <div class="form-group">
-            <label>Đáp án chính xác là:</label>
-            <select id="add-correct">
-                <option value="option_a">Đáp án A</option>
-                <option value="option_b">Đáp án B</option>
-                <option value="option_c">Đáp án C</option>
-            </select>
-        </div>
-        <button class="btn-add" onclick="addNewQuestion()">💾 Lưu Câu Hỏi Mới</button>
-        
-        <h3 style="text-align: left; margin-top: 25px; color:#555; font-size: 16px;">🗂️ Danh sách câu hỏi hiện có:</h3>
-        <div id="questions-list"></div>
     </div>
 
     <script>
@@ -58,11 +77,30 @@
 
         window.onload = function() {
             let saved = localStorage.getItem('local_quiz_db');
-            if (saved) {
-                questions = JSON.parse(saved);
-            }
-            renderAdminList();
+            if (saved) questions = JSON.parse(saved);
+            renderList();
         };
+
+        function renderList() {
+            document.getElementById('q-count').innerText = questions.length;
+            const listDiv = document.getElementById('questions-list');
+            if(questions.length === 0) {
+                listDiv.innerHTML = "<div style='color:#95a5a6; padding:20px 0;'>Kho câu hỏi đang trống.</div>";
+                document.getElementById('notepad-area').value = "";
+                return;
+            }
+            listDiv.innerHTML = questions.map((q, i) => `
+                <div class="q-item">
+                    <div style="font-weight:600;">${i + 1}. ${q.question}</div>
+                    <div style="font-size:13px; color:#7f8c8d;">A: ${q.option_a} | B: ${q.option_b} | C: ${q.option_c}</div>
+                    <div style="font-size:12px; color:var(--success-color); font-weight:bold;">✓ Đúng: ${q.correct_option.replace('option_', '').toUpperCase()}</div>
+                    <button class="btn-delete" onclick="deleteQuestion(${i})">Xóa</button>
+                </div>
+            `).join('');
+
+            // Tự động chuyển đổi kho dữ liệu thành dạng Text đẹp mắt để sẵn sàng copy vào Notepad
+            document.getElementById('notepad-area').value = JSON.stringify(questions, null, 4);
+        }
 
         function addNewQuestion() {
             const q = document.getElementById('add-q').value.trim();
@@ -71,41 +109,50 @@
             const c = document.getElementById('add-c').value.trim();
             const correct = document.getElementById('add-correct').value;
 
-            if(!q || !a || !b || !c) return alert("Vui lòng điền đủ câu hỏi và 3 phương án đáp án!");
+            if(!q || !a || !b || !c) return alert("Vui lòng điền đủ thông tin!");
 
-            const newQ = { question: q, option_a: a, option_b: b, option_c: c, correct_option: correct };
-            questions.push(newQ);
+            questions.push({ question: q, option_a: a, option_b: b, option_c: c, correct_option: correct });
             localStorage.setItem('local_quiz_db', JSON.stringify(questions));
             
-            alert("Đã lưu câu hỏi thành công!");
             document.getElementById('add-q').value = '';
             document.getElementById('add-a').value = '';
             document.getElementById('add-b').value = '';
             document.getElementById('add-c').value = '';
-            renderAdminList();
+            renderList();
         }
 
         function deleteQuestion(index) {
-            if(confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) {
+            if(confirm("Bạn có chắc chắn muốn xóa?")) {
                 questions.splice(index, 1);
                 localStorage.setItem('local_quiz_db', JSON.stringify(questions));
-                renderAdminList();
+                renderList();
             }
         }
 
-        function renderAdminList() {
-            const listDiv = document.getElementById('questions-list');
-            if(questions.length === 0) {
-                listDiv.innerHTML = "<p style='color:#7f8c8d; text-align:left;'>Hiện tại chưa có câu hỏi nào.</p>";
-                return;
+        function copyToClipboard() {
+            const area = document.getElementById('notepad-area');
+            if(!area.value) return alert("Không có dữ liệu văn bản câu hỏi nào để sao chép!");
+            area.select();
+            document.execCommand('copy');
+            alert("Đã sao chép chữ! Bây giờ bạn hãy mở file Notepad trên máy tính ra và ấn Ctrl+V để lưu lại nhé.");
+        }
+
+        function importFromNotepad() {
+            const text = document.getElementById('notepad-area').value.trim();
+            if(!text) return alert("Vui lòng dán đoạn dữ liệu chữ từ file Notepad của bạn vào ô trống trước!");
+            try {
+                const parsed = JSON.parse(text);
+                if (Array.isArray(parsed)) {
+                    questions = parsed;
+                    localStorage.setItem('local_quiz_db', JSON.stringify(questions));
+                    alert("📥 Đã nạp và đồng bộ câu hỏi từ văn bản Notepad vào web thành công!");
+                    renderList();
+                } else {
+                    alert("Cấu trúc văn bản chữ nhập vào không đúng định dạng!");
+                }
+            } catch (e) {
+                alert("Lỗi phân tích cú pháp chữ! Hãy chắc chắn bạn copy đúng và đủ toàn bộ ký tự từ file Notepad cũ.");
             }
-            listDiv.innerHTML = questions.map((q, i) => `
-                <div class="q-item">
-                    <strong>${i+1}. ${q.question}</strong><br>
-                    <span style="color:#27ae60; font-size:13px;">Đúng: ${q.correct_option.replace('option_', '').toUpperCase()}</span>
-                    <button class="btn-delete" onclick="deleteQuestion(${i})">Xóa</button>
-                </div>
-            `).join('');
         }
     </script>
 </body>
