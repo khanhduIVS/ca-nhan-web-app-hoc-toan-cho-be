@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Câu Hỏi</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f6fa; padding: 15px; margin: 0; color: #333; }
+        .wrapper { max-width: 550px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-top: 0; font-size: 20px; }
+        .form-group { text-align: left; margin-bottom: 12px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+        .btn-add { background-color: #2ecc71; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; }
+        .q-item { background: #f8f9fa; padding: 12px; border-left: 4px solid #3498db; margin-bottom: 8px; border-radius: 0 6px 6px 0; text-align: left; position: relative; }
+        .btn-delete { position: absolute; right: 10px; top: 12px; background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .back-btn { display: inline-block; margin-bottom: 15px; color: #3498db; text-decoration: none; font-weight: bold; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <a href="index.html" class="back-btn">← Quay lại Trang Chủ</a>
+        <h2>⚙️ Quản Lý Kho Câu Hỏi</h2>
+        
+        <div class="form-group">
+            <label>Nội dung câu hỏi:</label>
+            <input type="text" id="add-q" placeholder="Ví dụ: 1 cộng 1 bằng mấy?">
+        </div>
+        <div class="form-group">
+            <label>Đáp án A:</label>
+            <input type="text" id="add-a" placeholder="Nhập phương án A">
+        </div>
+        <div class="form-group">
+            <label>Đáp án B:</label>
+            <input type="text" id="add-b" placeholder="Nhập phương án B">
+        </div>
+        <div class="form-group">
+            <label>Đáp án C:</label>
+            <input type="text" id="add-c" placeholder="Nhập phương án C">
+        </div>
+        <div class="form-group">
+            <label>Đáp án chính xác là:</label>
+            <select id="add-correct">
+                <option value="option_a">Đáp án A</option>
+                <option value="option_b">Đáp án B</option>
+                <option value="option_c">Đáp án C</option>
+            </select>
+        </div>
+        <button class="btn-add" onclick="addNewQuestion()">💾 Lưu Câu Hỏi Mới</button>
+        
+        <h3 style="text-align: left; margin-top: 25px; color:#555; font-size: 16px;">🗂️ Danh sách câu hỏi hiện có:</h3>
+        <div id="questions-list"></div>
+    </div>
+
+    <script>
+        let questions = [];
+
+        window.onload = function() {
+            let saved = localStorage.getItem('local_quiz_db');
+            if (saved) {
+                questions = JSON.parse(saved);
+            }
+            renderAdminList();
+        };
+
+        function addNewQuestion() {
+            const q = document.getElementById('add-q').value.trim();
+            const a = document.getElementById('add-a').value.trim();
+            const b = document.getElementById('add-b').value.trim();
+            const c = document.getElementById('add-c').value.trim();
+            const correct = document.getElementById('add-correct').value;
+
+            if(!q || !a || !b || !c) return alert("Vui lòng điền đủ câu hỏi và 3 phương án đáp án!");
+
+            const newQ = { question: q, option_a: a, option_b: b, option_c: c, correct_option: correct };
+            questions.push(newQ);
+            localStorage.setItem('local_quiz_db', JSON.stringify(questions));
+            
+            alert("Đã lưu câu hỏi thành công!");
+            document.getElementById('add-q').value = '';
+            document.getElementById('add-a').value = '';
+            document.getElementById('add-b').value = '';
+            document.getElementById('add-c').value = '';
+            renderAdminList();
+        }
+
+        function deleteQuestion(index) {
+            if(confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) {
+                questions.splice(index, 1);
+                localStorage.setItem('local_quiz_db', JSON.stringify(questions));
+                renderAdminList();
+            }
+        }
+
+        function renderAdminList() {
+            const listDiv = document.getElementById('questions-list');
+            if(questions.length === 0) {
+                listDiv.innerHTML = "<p style='color:#7f8c8d; text-align:left;'>Hiện tại chưa có câu hỏi nào.</p>";
+                return;
+            }
+            listDiv.innerHTML = questions.map((q, i) => `
+                <div class="q-item">
+                    <strong>${i+1}. ${q.question}</strong><br>
+                    <span style="color:#27ae60; font-size:13px;">Đúng: ${q.correct_option.replace('option_', '').toUpperCase()}</span>
+                    <button class="btn-delete" onclick="deleteQuestion(${i})">Xóa</button>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

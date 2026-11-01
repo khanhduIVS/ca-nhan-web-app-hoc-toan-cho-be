@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bé Tập Trả Lời Đố Vui</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #eef7ff; text-align: center; padding: 15px; margin: 0; }
+        .container { max-width: 550px; margin: 0 auto; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border: 3px solid #ffde59; margin-top: 15px; }
+        h1 { color: #ff6b6b; margin-top: 10px; font-size: 24px; }
+        #question-text { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 25px; min-height: 60px; }
+        .btn-opt { display: block; width: 100%; margin: 15px 0; padding: 18px; font-size: 18px; border: none; border-radius: 12px; background-color: #ffeaa7; color: #2d3436; cursor: pointer; font-weight: bold; box-shadow: 0 4px #f1c40f; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
+        .btn-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px #f1c40f; }
+        .btn-opt:disabled { background-color: #dfe6e9; box-shadow: none; color: #b2bec3; }
+        #feedback { font-size: 22px; font-weight: bold; margin-top: 20px; height: 30px; }
+        .back-btn { display: inline-block; margin-top: 20px; color: #7f8c8d; text-decoration: none; font-weight: bold; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🌟 BÉ THỬ TÀI ĐỐ VUI 🌟</h1>
+        
+        <div class="card" id="quiz-box">
+            <p id="question-text">Đang chuẩn bị câu hỏi...</p>
+            <div id="options-box"></div>
+            <p id="feedback"></p>
+        </div>
+        
+        <a href="index.html" class="back-btn">🏠 Quay lại Trang Chủ</a>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        const defaultQuestions = [
+            { question: 'Con gì kêu "mèo méo meo"?', option_a: 'Con chó', option_b: 'Con mèo', option_c: 'Con thỏ', correct_option: 'option_b' },
+            { question: 'Quả dưa hấu ruột màu gì?', option_a: 'Màu đỏ', option_b: 'Màu xanh', option_c: 'Màu vàng', correct_option: 'option_a' }
+        ];
+
+        window.onload = function() {
+            let saved = localStorage.getItem('local_quiz_db');
+            if (!saved) {
+                questions = [...defaultQuestions];
+                localStorage.setItem('local_quiz_db', JSON.stringify(questions));
+            } else {
+                questions = JSON.parse(saved);
+            }
+            // Tráo ngẫu nhiên thứ tự xuất hiện câu hỏi
+            questions.sort(() => Math.random() - 0.5);
+            showQuestion();
+        };
+
+        function showQuestion() {
+            const qText = document.getElementById('question-text');
+            const optBox = document.getElementById('options-box');
+            const feedback = document.getElementById('feedback');
+            feedback.innerText = '';
+
+            if (questions.length === 0) {
+                qText.innerText = "Chưa có câu hỏi nào. Bố mẹ hãy vào mục Quản lý để thêm câu hỏi cho bé nhé!";
+                optBox.innerHTML = '';
+                return;
+            }
+
+            if (currentIdx >= questions.length) {
+                document.getElementById('quiz-box').innerHTML = `
+                    <h2 style="color: #2ecc71; margin-top:0;">🎉 BÉ HOÀN THÀNH XUẤT SẮC! 🎉</h2>
+                    <p style="font-size: 18px; font-weight:bold; color:#555;">Bé trả lời đúng được ${score} / ${questions.length} câu hỏi!</p>
+                    <button class="btn-opt" style="background-color: #2ecc71; color: white; box-shadow: 0 4px #27ae60;" onclick="location.reload()">Chơi Lại Vòng Mới</button>
+                `;
+                return;
+            }
+
+            const q = questions[currentIdx];
+            qText.innerText = `Câu ${currentIdx + 1}: ${q.question}`;
+            optBox.innerHTML = `
+                <button class="btn-opt" onclick="checkAnswer('option_a')">A. ${q.option_a}</button>
+                <button class="btn-opt" onclick="checkAnswer('option_b')">B. ${q.option_b}</button>
+                <button class="btn-opt" onclick="checkAnswer('option_c')">C. ${q.option_c}</button>
+            `;
+        }
+
+        function checkAnswer(selected) {
+            const q = questions[currentIdx];
+            const feedback = document.getElementById('feedback');
+            document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
+
+            if (selected === q.correct_option) {
+                feedback.style.color = '#2ecc71';
+                feedback.innerText = 'Đúng rồi! Bé giỏi quá! 🎈';
+                score++;
+            } else {
+                feedback.style.color = '#e74c3c';
+                feedback.innerText = 'Chưa đúng rồi bé ơi! ❤️';
+            }
+            setTimeout(() => { currentIdx++; showQuestion(); }, 1500);
+        }
+    </script>
+</body>
+</html>
