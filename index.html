@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Học Tập Cho Bé</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #eef7ff; text-align: center; padding: 40px 20px; margin: 0; }
-        .menu-container { max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border: 3px solid #ffde59; }
-        h1 { color: #ff6b6b; margin-top: 0; font-size: 28px; }
-        p { color: #7f8c8d; font-size: 16px; margin-bottom: 30px; }
-        .menu-btn { display: block; width: 100%; margin: 15px 0; padding: 18px; font-size: 20px; border: none; border-radius: 15px; color: white; cursor: pointer; font-weight: bold; text-decoration: none; box-shadow: 0 4px rgba(0,0,0,0.1); transition: all 0.2s; }
-        .btn-be { background-color: #2ecc71; box-shadow: 0 5px #27ae60; }
-        .btn-be:active { transform: translateY(3px); box-shadow: 0 2px #27ae60; }
-        .btn-me { background-color: #3498db; box-shadow: 0 5px #2980b9; }
-        .btn-me:active { transform: translateY(3px); box-shadow: 0 2px #2980b9; }
-    </style>
+    <title>Hệ Thống Học Toán Cho Bé</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="menu-container">
-        <h1>🌟 TRÒ CHƠI ĐỐ VUI CỦA BÉ 🌟</h1>
-        <p>Hệ thống chạy offline 100% không cần cài đặt phần mềm</p>
-        <a href="be_hoc.html" class="menu-btn btn-be">👶 VÀO TRÒ CHƠI (CHO BÉ)</a>
-        <a href="quan_ly.html" class="menu-btn btn-me">⚙️ QUẢN LÝ CÂU HỎI (PHỤ HUYNH)</a>
+<div class="app">
+    <h1>🌟 HỆ THỐNG HỌC TOÁN CỦA BÉ 🌟</h1>
+    <p class="subtitle">Chạy offline 100% trên trình duyệt &bull; Dữ liệu lưu ngay trên máy</p>
+    <div class="home-menu">
+        <a class="menu-btn btn-be" href="be_hoc.html">👶 BÉ HỌC (LÀM BÀI KIỂM TRA)</a>
+        <a class="menu-btn btn-me" href="quan_ly.html">⚙️ QUẢN LÝ CÂU HỎI (PHỤ HUYNH)</a>
     </div>
+</div>
+
+<!-- Nạp dữ liệu mẫu sẵn vào localStorage ngay ở trang chủ nếu chưa có -->
+<script src="app.js"></script>
+<script>
+    window.addEventListener('load', () => { ensureData(); });
+</script>
 </body>
 </html>
