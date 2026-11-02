@@ -4,156 +4,302 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Câu Hỏi</title>
-    <style>
-        :root { --primary-color: #4a90e2; --success-color: #2ecc71; --danger-color: #e74c3c; --bg-color: #f4f7f6; --card-bg: #ffffff; --text-main: #2c3e50; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-main); }
-        .header-bar { max-width: 1100px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; }
-        .back-btn { background-color: #ffffff; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 10px 18px; font-size: 14px; font-weight: bold; border-radius: 8px; text-decoration: none; }
-        .dashboard { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        @media (max-width: 850px) { .dashboard { grid-template-columns: 1fr; } }
-        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
-        h2 { margin-top: 0; margin-bottom: 20px; font-size: 18px; border-bottom: 2px solid #eaeded; padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #7f8c8d; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccd1d1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        .btn { color: white; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 5px; }
-        .btn-add { background-color: var(--success-color); width: 100%; padding: 14px; font-size: 15px; }
-        .btn-blue { background-color: var(--primary-color); }
-        .btn-orange { background-color: #e67e22; }
-        .questions-scroll { max-height: 400px; overflow-y: auto; }
-        .q-item { background: #f8f9f9; padding: 15px; margin-bottom: 12px; border-radius: 10px; border-left: 4px solid var(--primary-color); position: relative; }
-        .btn-delete { position: absolute; right: 15px; top: 15px; background: transparent; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .notepad-panel { max-width: 1100px; margin: 25px auto 0 auto; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="header-bar">
-        <div style="font-size: 20px; font-weight: bold;">⚙️ BẢNG QUẢN LÝ (KHÔNG CÀI THƯ VIỆN)</div>
-        <a href="index.html" class="back-btn">🏠 Quay lại Trang Chủ</a>
+<div class="app">
+    <div class="top-bar">
+        <div class="title">⚙️ Quản Lý Câu Hỏi</div>
+        <a class="btn btn-gray btn-sm back-link" href="index.html">🏠 Trang chủ</a>
     </div>
 
-    <div class="dashboard">
-        <!-- CỘT 1: THÊM CÂU HỎI -->
-        <div class="card">
-            <h2>📝 Tạo Câu Hỏi Mới</h2>
-            <div class="form-group"><label>Nội dung câu hỏi:</label><input type="text" id="add-q" placeholder="Ví dụ: 1 + 1 bằng mấy?"></div>
-            <div class="form-group"><label>Đáp án A:</label><input type="text" id="add-a" placeholder="Phương án A"></div>
-            <div class="form-group"><label>Đáp án B:</label><input type="text" id="add-b" placeholder="Phương án B"></div>
-            <div class="form-group"><label>Đáp án C:</label><input type="text" id="add-c" placeholder="Phương án C"></div>
-            <div class="form-group"><label>Đáp án đúng:</label>
-                <select id="add-correct">
-                    <option value="option_a">Đáp án A</option>
-                    <option value="option_b">Đáp án B</option>
-                    <option value="option_c">Đáp án C</option>
-                </select>
+    <div class="tabs">
+        <button class="tab active" data-tab="tab-crud" onclick="switchTab('tab-crud')">📝 Câu hỏi</button>
+        <button class="tab" data-tab="tab-data" onclick="switchTab('tab-data')">💾 Dữ liệu</button>
+        <button class="tab" data-tab="tab-history" onclick="switchTab('tab-history'); renderHistory();">📊 Kết quả</button>
+    </div>
+
+    <!-- ===== TAB CRUD ===== -->
+    <div id="tab-crud">
+        <div class="card plain">
+            <h2 id="form-title">➕ Thêm Câu Hỏi Mới</h2>
+            <div class="form-group"><label>Nội dung câu hỏi / phép toán:</label>
+                <input type="text" id="f-q" placeholder="Ví dụ: 2 + 3 = ?"></div>
+            <div class="row">
+                <div class="form-group"><label>Đáp án A:</label><input type="text" id="f-a"></div>
+                <div class="form-group"><label>Đáp án B:</label><input type="text" id="f-b"></div>
+                <div class="form-group"><label>Đáp án C:</label><input type="text" id="f-c"></div>
             </div>
-            <button class="btn btn-add" onclick="addNewQuestion()">💾 Lưu Lên Hệ Thống Web</button>
+            <div class="row">
+                <div class="form-group"><label>Đáp án đúng:</label>
+                    <select id="f-correct">
+                        <option value="option_a">Đáp án A</option>
+                        <option value="option_b">Đáp án B</option>
+                        <option value="option_c">Đáp án C</option>
+                    </select></div>
+                <div class="form-group"><label>Độ khó:</label>
+                    <select id="f-level"><option value="easy">Dễ</option><option value="hard">Khó</option></select></div>
+                <div class="form-group"><label>Bài:</label>
+                    <input type="text" id="f-lesson" list="lesson-suggest" placeholder="Ví dụ: Bài 1: Phép cộng">
+                    <datalist id="lesson-suggest"></datalist></div>
+            </div>
+            <input type="hidden" id="f-edit-index" value="-1">
+            <div class="row">
+                <button class="btn btn-green" id="btn-save" onclick="saveQuestion()">💾 Lưu câu hỏi</button>
+                <button class="btn btn-gray" id="btn-cancel" style="display:none;" onclick="resetForm()">Hủy sửa</button>
+            </div>
         </div>
-        
-        <!-- CỘT 2: DANH SÁCH -->
-        <div class="card">
-            <h2>🗂️ Danh Sách Hiện Có (<span id="q-count">0</span>)</h2>
-            <div class="questions-scroll" id="questions-list"></div>
+
+        <div class="card plain">
+            <div class="row" style="align-items:flex-end;">
+                <div class="form-group" style="margin-bottom:8px;"><label>Lọc độ khó:</label>
+                    <select id="flt-level" onchange="renderQuestionList()">
+                        <option value="all">Tất cả</option><option value="easy">Dễ</option><option value="hard">Khó</option>
+                    </select></div>
+                <div class="form-group" style="margin-bottom:8px;"><label>Lọc theo bài:</label>
+                    <select id="flt-lesson" onchange="renderQuestionList()"><option value="all">Tất cả</option></select></div>
+            </div>
+            <h2>🗂️ Danh sách câu hỏi (<span id="q-count">0</span>)</h2>
+            <div class="q-scroll" id="questions-list"></div>
         </div>
     </div>
 
-    <!-- KHU VỰC KẾT NỐI VỚI FILE NOTEPAD -->
-    <div class="notepad-panel">
-        <div class="card" style="border: 2px dashed #bdc3c7;">
-            <h2>📋 Đồng Bộ Hóa Với File Notepad Của Bạn</h2>
-            <p style="font-size: 13px; color: #7f8c8d; margin-top:-10px;">Bạn có thể sao chép đoạn chữ dưới đây lưu vào file Notepad trên máy tính, hoặc dán chữ từ file Notepad vào đây để nạp câu hỏi.</p>
+    <!-- ===== TAB DATA ===== -->
+    <div id="tab-data" style="display:none;">
+        <div class="card plain">
+            <h2>💾 Sao lưu & Khôi phục dữ liệu</h2>
+            <p class="hint">Dữ liệu câu hỏi được lưu trong trình duyệt (localStorage). Dùng các nút dưới để sao lưu ra file hoặc nạp lại.</p>
+            <div class="row">
+                <button class="btn btn-blue" onclick="exportQuestions()">⬇️ Tải file questions.json</button>
+                <button class="btn btn-orange" onclick="document.getElementById('import-file').click()">⬆️ Nạp từ file JSON</button>
+                <button class="btn btn-gray" onclick="reloadSample()">🔄 Nạp lại dữ liệu mẫu</button>
+            </div>
+            <input type="file" id="import-file" accept=".json,application/json" style="display:none" onchange="importQuestions(event)">
+            <p class="hint" style="margin-top:14px;">💡 Muốn cập nhật trên GitHub? Tải file <b>questions.json</b> rồi thay vào thư mục repo và commit.</p>
+        </div>
+
+        <div class="card plain">
+            <h2>📋 Xem / Dán nhanh JSON</h2>
             <div class="form-group">
-                <textarea id="notepad-area" rows="6" placeholder="Dữ liệu văn bản câu hỏi dạng chữ sẽ hiển thị ở đây..."></textarea>
+                <textarea id="json-area" rows="7" placeholder="Nội dung JSON hiển thị ở đây..."></textarea>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-blue" onclick="copyToClipboard()">📋 1. Sao chép chữ để dán vào Notepad</button>
-                <button class="btn btn-orange" onclick="importFromNotepad()">📥 2. Nạp dữ liệu chữ từ Notepad vào Web</button>
+            <div class="row">
+                <button class="btn btn-blue" onclick="copyJson()">📋 Sao chép</button>
+                <button class="btn btn-orange" onclick="importFromText()">📥 Nạp từ ô văn bản</button>
             </div>
+        </div>
+
+        <div class="card plain">
+            <h2>☁️ Google Sheet (tùy chọn)</h2>
+            <p class="hint">Dán URL Google Apps Script để tự động gửi kết quả bài kiểm tra lên Google Sheet. Bỏ trống nếu chỉ lưu offline.</p>
+            <div class="form-group">
+                <input type="text" id="sheet-url" placeholder="https://script.google.com/macros/s/..../exec">
+            </div>
+            <button class="btn btn-green btn-sm" onclick="saveSheetUrl()">💾 Lưu URL</button>
         </div>
     </div>
 
-    <script>
-        let questions = [];
+    <!-- ===== TAB HISTORY ===== -->
+    <div id="tab-history" style="display:none;">
+        <div class="card plain">
+            <h2>📊 Lịch sử kết quả bài kiểm tra</h2>
+            <div class="row" style="margin-bottom:14px;">
+                <button class="btn btn-green" onclick="exportHistoryCsv()">⬇️ Xuất Excel (.csv)</button>
+                <button class="btn btn-red" onclick="clearHistory()">🗑️ Xóa lịch sử</button>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="history-table" id="history-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
 
-        window.onload = function() {
-            let saved = localStorage.getItem('local_quiz_db');
-            if (saved) questions = JSON.parse(saved);
-            renderList();
-        };
+<script src="app.js"></script>
+<script>
+/* =========================================================
+   QUAN_LY.JS - Luồng dành cho phụ huynh
+   ========================================================= */
+window.addEventListener('load', async () => {
+    await ensureData();
+    renderAll();
+    const url = localStorage.getItem(SHEET_KEY);
+    if (url) document.getElementById('sheet-url').value = url;
+});
 
-        function renderList() {
-            document.getElementById('q-count').innerText = questions.length;
-            const listDiv = document.getElementById('questions-list');
-            if(questions.length === 0) {
-                listDiv.innerHTML = "<div style='color:#95a5a6; padding:20px 0;'>Kho câu hỏi đang trống.</div>";
-                document.getElementById('notepad-area').value = "";
-                return;
-            }
-            listDiv.innerHTML = questions.map((q, i) => `
-                <div class="q-item">
-                    <div style="font-weight:600;">${i + 1}. ${q.question}</div>
-                    <div style="font-size:13px; color:#7f8c8d;">A: ${q.option_a} | B: ${q.option_b} | C: ${q.option_c}</div>
-                    <div style="font-size:12px; color:var(--success-color); font-weight:bold;">✓ Đúng: ${q.correct_option.replace('option_', '').toUpperCase()}</div>
-                    <button class="btn-delete" onclick="deleteQuestion(${i})">Xóa</button>
-                </div>
-            `).join('');
+function switchTab(tabId) {
+    ['tab-crud', 'tab-data', 'tab-history'].forEach(t =>
+        document.getElementById(t).style.display = (t === tabId ? 'block' : 'none'));
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+}
 
-            // Tự động chuyển đổi kho dữ liệu thành dạng Text đẹp mắt để sẵn sàng copy vào Notepad
-            document.getElementById('notepad-area').value = JSON.stringify(questions, null, 4);
-        }
+function renderAll() {
+    rebuildLessonOptions();
+    renderQuestionList();
+    document.getElementById('json-area').value = JSON.stringify(questions, null, 2);
+}
 
-        function addNewQuestion() {
-            const q = document.getElementById('add-q').value.trim();
-            const a = document.getElementById('add-a').value.trim();
-            const b = document.getElementById('add-b').value.trim();
-            const c = document.getElementById('add-c').value.trim();
-            const correct = document.getElementById('add-correct').value;
+/* ---------- Danh sách bài cho datalist + bộ lọc ---------- */
+function rebuildLessonOptions() {
+    const lessons = getLessons();
+    document.getElementById('lesson-suggest').innerHTML = lessons.map(l => `<option value="${esc(l)}">`).join('');
+    const sel = document.getElementById('flt-lesson');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="all">Tất cả</option>' +
+        lessons.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+    if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+}
 
-            if(!q || !a || !b || !c) return alert("Vui lòng điền đủ thông tin!");
+/* ---------- CRUD ---------- */
+function saveQuestion() {
+    const q = val('f-q'), a = val('f-a'), b = val('f-b'), c = val('f-c');
+    const correct = document.getElementById('f-correct').value;
+    const level = document.getElementById('f-level').value;
+    const lesson = val('f-lesson') || 'Chưa phân loại';
+    if (!q || !a || !b || !c) return alert('Vui lòng điền đủ câu hỏi và 3 đáp án!');
 
-            questions.push({ question: q, option_a: a, option_b: b, option_c: c, correct_option: correct });
-            localStorage.setItem('local_quiz_db', JSON.stringify(questions));
-            
-            document.getElementById('add-q').value = '';
-            document.getElementById('add-a').value = '';
-            document.getElementById('add-b').value = '';
-            document.getElementById('add-c').value = '';
-            renderList();
-        }
+    const item = { question: q, option_a: a, option_b: b, option_c: c, correct_option: correct, level, lesson };
+    const idx = parseInt(document.getElementById('f-edit-index').value, 10);
 
-        function deleteQuestion(index) {
-            if(confirm("Bạn có chắc chắn muốn xóa?")) {
-                questions.splice(index, 1);
-                localStorage.setItem('local_quiz_db', JSON.stringify(questions));
-                renderList();
-            }
-        }
+    if (idx >= 0) { questions[idx] = item; }
+    else { questions.push(item); }
 
-        function copyToClipboard() {
-            const area = document.getElementById('notepad-area');
-            if(!area.value) return alert("Không có dữ liệu văn bản câu hỏi nào để sao chép!");
-            area.select();
-            document.execCommand('copy');
-            alert("Đã sao chép chữ! Bây giờ bạn hãy mở file Notepad trên máy tính ra và ấn Ctrl+V để lưu lại nhé.");
-        }
+    saveDb();
+    resetForm();
+    renderAll();
+}
 
-        function importFromNotepad() {
-            const text = document.getElementById('notepad-area').value.trim();
-            if(!text) return alert("Vui lòng dán đoạn dữ liệu chữ từ file Notepad của bạn vào ô trống trước!");
-            try {
-                const parsed = JSON.parse(text);
-                if (Array.isArray(parsed)) {
-                    questions = parsed;
-                    localStorage.setItem('local_quiz_db', JSON.stringify(questions));
-                    alert("📥 Đã nạp và đồng bộ câu hỏi từ văn bản Notepad vào web thành công!");
-                    renderList();
-                } else {
-                    alert("Cấu trúc văn bản chữ nhập vào không đúng định dạng!");
-                }
-            } catch (e) {
-                alert("Lỗi phân tích cú pháp chữ! Hãy chắc chắn bạn copy đúng và đủ toàn bộ ký tự từ file Notepad cũ.");
-            }
-        }
-    </script>
+function editQuestion(i) {
+    const q = questions[i];
+    document.getElementById('f-q').value = q.question;
+    document.getElementById('f-a').value = q.option_a;
+    document.getElementById('f-b').value = q.option_b;
+    document.getElementById('f-c').value = q.option_c;
+    document.getElementById('f-correct').value = q.correct_option;
+    document.getElementById('f-level').value = q.level;
+    document.getElementById('f-lesson').value = q.lesson;
+    document.getElementById('f-edit-index').value = i;
+    document.getElementById('form-title').innerText = '✏️ Sửa Câu Hỏi #' + (i + 1);
+    document.getElementById('btn-save').innerText = '💾 Cập nhật';
+    document.getElementById('btn-cancel').style.display = 'inline-block';
+    switchTab('tab-crud');
+    window.scrollTo(0, 0);
+}
+
+function resetForm() {
+    ['f-q', 'f-a', 'f-b', 'f-c', 'f-lesson'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f-correct').value = 'option_a';
+    document.getElementById('f-level').value = 'easy';
+    document.getElementById('f-edit-index').value = -1;
+    document.getElementById('form-title').innerText = '➕ Thêm Câu Hỏi Mới';
+    document.getElementById('btn-save').innerText = '💾 Lưu câu hỏi';
+    document.getElementById('btn-cancel').style.display = 'none';
+}
+
+function deleteQuestion(i) {
+    if (!confirm('Xóa câu hỏi: "' + questions[i].question + '"?')) return;
+    questions.splice(i, 1);
+    saveDb();
+    renderAll();
+}
+
+function renderQuestionList() {
+    const fLevel = document.getElementById('flt-level').value;
+    const fLesson = document.getElementById('flt-lesson').value;
+    const list = document.getElementById('questions-list');
+
+    const rows = questions
+        .map((q, i) => ({ q, i }))
+        .filter(x => (fLevel === 'all' || x.q.level === fLevel) && (fLesson === 'all' || x.q.lesson === fLesson));
+
+    document.getElementById('q-count').innerText = rows.length;
+    if (!rows.length) { list.innerHTML = '<div class="empty">Không có câu hỏi phù hợp.</div>'; return; }
+
+    list.innerHTML = rows.map(({ q, i }) => `
+        <div class="q-item ${q.level}">
+            <div class="q-actions">
+                <button class="btn btn-blue btn-sm" onclick="editQuestion(${i})">Sửa</button>
+                <button class="btn btn-red btn-sm" onclick="deleteQuestion(${i})">Xóa</button>
+            </div>
+            <div class="q-title">${i + 1}. ${esc(q.question)}</div>
+            <div class="q-meta">
+                <span class="badge ${q.level === 'hard' ? 'badge-hard' : 'badge-easy'}">${q.level === 'hard' ? 'KHÓ' : 'DỄ'}</span>
+                <span class="badge badge-lesson">${esc(q.lesson)}</span>
+            </div>
+            <div class="q-opts">A: ${esc(q.option_a)} &nbsp;|&nbsp; B: ${esc(q.option_b)} &nbsp;|&nbsp; C: ${esc(q.option_c)}
+                &nbsp;→ ✓ <b>${q.correct_option.replace('option_', '').toUpperCase()}</b></div>
+        </div>`).join('');
+}
+
+/* ---------- Dữ liệu: xuất / nhập ---------- */
+function exportQuestions() {
+    downloadFile('questions.json', JSON.stringify(questions, null, 2), 'application/json');
+}
+function importQuestions(ev) {
+    const file = ev.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!Array.isArray(data)) throw new Error('Không phải mảng JSON');
+            questions = data.map(normalizeQ);
+            saveDb(); renderAll();
+            alert('Đã nạp ' + questions.length + ' câu hỏi từ file!');
+        } catch (err) { alert('File không hợp lệ: ' + err.message); }
+        ev.target.value = '';
+    };
+    reader.readAsText(file);
+}
+async function reloadSample() {
+    if (!confirm('Nạp lại dữ liệu mẫu từ questions.json? Dữ liệu hiện tại sẽ bị ghi đè.')) return;
+    const ok = await loadSampleData(false);
+    if (ok) renderAll();
+}
+function copyJson() {
+    const a = document.getElementById('json-area');
+    a.select();
+    try { document.execCommand('copy'); alert('Đã sao chép JSON!'); } catch (e) {}
+}
+function importFromText() {
+    try {
+        const data = JSON.parse(document.getElementById('json-area').value.trim());
+        if (!Array.isArray(data)) throw new Error('Không phải mảng JSON');
+        questions = data.map(normalizeQ);
+        saveDb(); renderAll();
+        alert('Đã nạp ' + questions.length + ' câu hỏi!');
+    } catch (e) { alert('JSON không hợp lệ: ' + e.message); }
+}
+function saveSheetUrl() {
+    localStorage.setItem(SHEET_KEY, document.getElementById('sheet-url').value.trim());
+    alert('Đã lưu URL Google Sheet!');
+}
+
+/* ---------- Lịch sử kết quả ---------- */
+function renderHistory() {
+    const h = getHistory();
+    const t = document.getElementById('history-table');
+    if (!h.length) { t.innerHTML = '<tr><td class="empty">Chưa có kết quả nào được lưu.</td></tr>'; return; }
+    t.innerHTML = '<tr><th>#</th><th>Thời gian</th><th>Điểm</th><th>%</th><th>Độ khó</th><th>Bài</th></tr>' +
+        h.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.time)}</td><td><b>${r.score}/${r.total}</b></td>
+            <td>${r.percent}%</td><td>${esc(r.level)}</td><td>${esc(r.lesson)}</td></tr>`).join('');
+}
+function exportHistoryCsv() {
+    const h = getHistory();
+    if (!h.length) return alert('Chưa có kết quả nào để xuất!');
+    const header = ['STT', 'Thời gian', 'Điểm', 'Tổng', 'Phần trăm', 'Độ khó', 'Bài'];
+    const rows = h.map((r, i) => [i + 1, r.time, r.score, r.total, r.percent + '%', r.level, r.lesson]);
+    const csv = '\uFEFF' + [header, ...rows].map(r => r.map(csvCell).join(',')).join('\r\n');
+    downloadFile('ket_qua_hoc_toan.csv', csv, 'text/csv');
+}
+function csvCell(v) { v = String(v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function clearHistory() {
+    if (!confirm('Xóa toàn bộ lịch sử kết quả?')) return;
+    clearHistoryStore();
+    renderHistory();
+}
+
+/* ---------- Tiện ích riêng ---------- */
+function val(id) { return document.getElementById(id).value.trim(); }
+</script>
 </body>
 </html>
