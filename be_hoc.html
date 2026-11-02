@@ -3,116 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Bé Tập Trả Lời Đố Vui</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #eef7ff; text-align: center; padding: 15px; margin: 0; }
-        .container { max-width: 550px; margin: 0 auto; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border: 3px solid #ffde59; margin-top: 15px; }
-        h1 { color: #ff6b6b; margin-top: 10px; font-size: 24px; }
-        #question-text { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 25px; min-height: 60px; }
-        .btn-opt { display: block; width: 100%; margin: 15px 0; padding: 18px; font-size: 18px; border: none; border-radius: 12px; background-color: #ffeaa7; color: #2d3436; cursor: pointer; font-weight: bold; box-shadow: 0 4px #f1c40f; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
-        .btn-opt:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px #f1c40f; }
-        .btn-opt:disabled { background-color: #dfe6e9; box-shadow: none; color: #b2bec3; cursor: not-allowed; }
-        #feedback { font-size: 22px; font-weight: bold; margin-top: 20px; height: 30px; }
-        .back-btn { display: inline-block; margin-top: 20px; color: #7f8c8d; text-decoration: none; font-weight: bold; font-size: 15px; }
-        .version-tag { font-size: 11px; color: #b2bec3; margin-top: 30px; font-weight: bold; }
-    </style>
+    <title>Bé Học Toán</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="app">
 
-    <div class="container">
-        <h1>🌟 BÉ THỬ TÀI ĐỐ VUI 🌟</h1>
-        
-        <div class="card" id="quiz-box">
-            <p id="question-text">Đang kết nối nhận câu hỏi mới nhất từ GitHub...</p>
-            <div id="options-box"></div>
-            <p id="feedback"></p>
+    <!-- ========== SETUP ========== -->
+    <div id="screen-setup" class="screen active">
+        <div class="top-bar">
+            <div class="title">🎯 Thiết Lập Bài Kiểm Tra</div>
+            <a class="btn btn-gray btn-sm back-link" href="index.html">🏠 Trang chủ</a>
         </div>
-        
-        <a href="index.html" class="back-btn">🏠 Quay lại Trang Chủ</a>
-        <div class="version-tag">Mã phiên bản ứng dụng: V1.3 (Phá vỡ bộ nhớ đệm Cache JSON)</div>
+        <div class="card">
+            <div class="form-group">
+                <label>Chọn độ khó:</label>
+                <select id="setup-level">
+                    <option value="all">Tất cả (dễ + khó)</option>
+                    <option value="easy">Chỉ câu DỄ</option>
+                    <option value="hard">Chỉ câu KHÓ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Chọn bài:</label>
+                <select id="setup-lesson"><option value="all">Tất cả các bài</option></select>
+            </div>
+            <div class="form-group">
+                <label>Số câu hỏi: <span id="count-label" style="color:#3498db">5</span> câu (tối thiểu 5, tối đa 15)</label>
+                <input type="range" id="setup-count" min="5" max="15" value="5"
+                       oninput="document.getElementById('count-label').innerText=this.value">
+            </div>
+            <p id="pool-info" class="hint"></p>
+            <button class="btn btn-green btn-wide" onclick="startQuiz()">🚀 Bắt đầu làm bài!</button>
+        </div>
     </div>
 
-    <script>
-        // Đường dẫn tương đối đọc trực tiếp file nằm chung thư mục trên GitHub Pages
-        const GITHUB_RAW_URL = "questions.json";
+    <!-- ========== QUIZ ========== -->
+    <div id="screen-quiz" class="screen">
+        <div class="top-bar">
+            <div class="title" id="quiz-progress-label">Câu 1</div>
+            <button class="btn btn-gray btn-sm" onclick="quitQuiz()">✖ Thoát</button>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="card" id="quiz-card">
+            <div id="visual-box"></div>
+            <div id="question-text"></div>
+            <div class="tries-info" id="tries-info"></div>
+            <div id="options-box"></div>
+            <div id="feedback"></div>
+        </div>
+    </div>
 
-        let questions = [];
-        let currentIdx = 0;
-        let score = 0;
+    <!-- ========== RESULT ========== -->
+    <div id="screen-result" class="screen">
+        <div class="card" style="text-align:center;">
+            <div class="result-big" id="result-emoji">🎉</div>
+            <h2 id="result-title" style="text-align:center;">Hoàn thành!</h2>
+            <p class="stat" id="result-score"></p>
+            <p class="stat" id="result-detail"></p>
+            <p class="hint" id="result-saved">Kết quả đã được lưu lại.</p>
+            <button class="btn btn-green btn-wide" onclick="goSetup()">🔄 Làm bài mới</button>
+            <a class="btn btn-gray btn-wide back-link" style="margin-top:10px; display:block;" href="index.html">🏠 Trang chủ</a>
+        </div>
+    </div>
 
-        window.onload = async function() {
-            try {
-                // Tạo chuỗi thời gian ngẫu nhiên duy nhất để ép trình duyệt luôn tải file tươi mới từ Server GitHub
-                const cacheBuster = "?nocache=" + new Date().getTime() + Math.random().toString(36).substring(2, 7);
-                
-                const res = await fetch(GITHUB_RAW_URL + cacheBuster);
-                
-                if (!res.ok) {
-                    throw new Error("Mã phản hồi từ server: " + res.status);
-                }
-                
-                questions = await res.json();
-                
-                // Tráo câu hỏi ngẫu nhiên cho bé học sinh động
-                questions.sort(() => Math.random() - 0.5);
-                showQuestion();
-            } catch (err) {
-                document.getElementById('question-text').innerText = "❌ Lỗi hệ thống: Không thể đọc nội dung file questions.json trên GitHub! Bạn hãy bấm F12 hoặc kiểm tra lại file cấu trúc dữ liệu nhé.";
-                console.error("Chi tiết lỗi tải JSON:", err);
-            }
-        };
+</div>
 
-        function showQuestion() {
-            const qText = document.getElementById('question-text');
-            const optBox = document.getElementById('options-box');
-            const feedback = document.getElementById('feedback');
-            feedback.innerText = '';
+<script src="app.js"></script>
+<script>
+/* =========================================================
+   BE_HOC.JS - Luồng dành cho học sinh
+   ========================================================= */
+const MAX_TRIES = 2;
+let quizSet = [], qIdx = 0, score = 0, triesLeft = MAX_TRIES, quizMeta = {};
 
-            if (!questions || questions.length === 0) {
-                qText.innerText = "Dữ liệu trên GitHub đang trống. Bố mẹ hãy sang trang Quản Lý cập nhật thêm nhé!";
-                optBox.innerHTML = '';
-                return;
-            }
+window.addEventListener('load', async () => {
+    await ensureData();
+    goSetup();
+});
 
-            if (currentIdx >= questions.length) {
-                document.getElementById('quiz-box').innerHTML = `
-                    <h2 style="color: #2ecc71; margin-top:0;">🎉 BÉ HOÀN THÀNH XUẤT SẮC! 🎉</h2>
-                    <p style="font-size: 18px; font-weight:bold; color:#555;">Bé đã trả lời đúng được ${score} / ${questions.length} câu hỏi!</p>
-                    <button class="btn-opt" style="background-color: #2ecc71; color: white; box-shadow: 0 4px #27ae60;" onclick="location.reload()">Chơi Lại Vòng Mới</button>
-                `;
-                return;
-            }
+/* ---------- Điều hướng màn hình nội bộ ---------- */
+function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+}
 
-            const q = questions[currentIdx];
-            qText.innerText = `Câu ${currentIdx + 1}: ${q.question}`;
-            optBox.innerHTML = `
-                <button class="btn-opt" onclick="checkAnswer('option_a')">A. ${q.option_a}</button>
-                <button class="btn-opt" onclick="checkAnswer('option_b')">B. ${q.option_b}</button>
-                <button class="btn-opt" onclick="checkAnswer('option_c')">C. ${q.option_c}</button>
-            `;
+/* ---------- SETUP ---------- */
+function goSetup() {
+    loadDb();
+    rebuildSetupLessons();
+    show('screen-setup');
+    updatePoolInfo();
+    document.getElementById('setup-level').onchange = updatePoolInfo;
+    document.getElementById('setup-lesson').onchange = updatePoolInfo;
+}
+function rebuildSetupLessons() {
+    const sel = document.getElementById('setup-lesson');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="all">Tất cả các bài</option>' +
+        getLessons().map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+    if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+}
+function currentPool() {
+    return filterQuestions(
+        document.getElementById('setup-level').value,
+        document.getElementById('setup-lesson').value
+    );
+}
+function updatePoolInfo() {
+    const n = currentPool().length;
+    const info = document.getElementById('pool-info');
+    info.innerText = `Kho hiện có ${n} câu hỏi phù hợp.` + (n < 5 ? ' ⚠️ Cần tối thiểu 5 câu để bắt đầu.' : '');
+    info.style.color = n < 5 ? '#e74c3c' : '#7f8c8d';
+}
+
+/* ---------- QUIZ ---------- */
+function startQuiz() {
+    const pool = currentPool();
+    if (pool.length < 5) { alert('Cần tối thiểu 5 câu hỏi phù hợp. Hãy đổi bộ lọc hoặc thêm câu hỏi ở trang Quản Lý.'); return; }
+    const n = Math.min(parseInt(document.getElementById('setup-count').value, 10), pool.length);
+    quizSet = shuffle([...pool]).slice(0, n);
+    qIdx = 0; score = 0;
+    quizMeta = {
+        level: document.getElementById('setup-level').value,
+        lesson: document.getElementById('setup-lesson').value,
+        total: quizSet.length
+    };
+    show('screen-quiz');
+    renderQuizShell();
+    showQuestion();
+}
+
+function renderQuizShell() {
+    document.getElementById('quiz-card').innerHTML = `
+        <div id="visual-box"></div>
+        <div id="question-text"></div>
+        <div class="tries-info" id="tries-info"></div>
+        <div id="options-box"></div>
+        <div id="feedback"></div>`;
+}
+
+function showQuestion() {
+    triesLeft = MAX_TRIES;
+    const q = quizSet[qIdx];
+    document.getElementById('quiz-progress-label').innerText = `Câu ${qIdx + 1} / ${quizSet.length}`;
+    document.getElementById('progress-bar').style.width = (qIdx / quizSet.length * 100) + '%';
+    document.getElementById('visual-box').innerHTML = buildVisual(q.question);
+    document.getElementById('question-text').innerText = q.question;
+    document.getElementById('tries-info').innerText = '';
+    document.getElementById('feedback').innerText = '';
+    const opts = ['a', 'b', 'c'];
+    document.getElementById('options-box').innerHTML = opts.map(o => `
+        <button class="opt-btn" data-opt="option_${o}" onclick="answer('option_${o}', this)">
+            ${o.toUpperCase()}. ${esc(q['option_' + o])}
+        </button>`).join('');
+}
+
+/* Biểu diễn phép toán sinh động bằng emoji khi là phép cộng/trừ số nhỏ */
+function buildVisual(text) {
+    const m = text.match(/^\s*(\d{1,2})\s*([+\-])\s*(\d{1,2})/);
+    if (!m) return '🧮';
+    let x = parseInt(m[1], 10), op = m[2], y = parseInt(m[3], 10);
+    if (x > 12 || y > 12) return (op === '+') ? '➕🧮' : '➖🧮';
+    const emojis = ['🍎', '🍌', '🍓', '⭐', '🎈', '🐱', '🐶', '🚗', '🌸', '🍪'];
+    const e = emojis[Math.floor(Math.random() * emojis.length)];
+    const grp = n => e.repeat(n);
+    return (op === '+')
+        ? `<span>${grp(x)}</span> ➕ <span>${grp(y)}</span>`
+        : `<span>${grp(x)}</span> ➖ <span style="opacity:.4">${grp(y)}</span>`;
+}
+
+function answer(selected, btn) {
+    const q = quizSet[qIdx];
+    const feedback = document.getElementById('feedback');
+    const allBtns = document.querySelectorAll('.opt-btn');
+
+    if (selected === q.correct_option) {
+        btn.classList.add('correct');
+        allBtns.forEach(b => b.disabled = true);
+        feedback.style.color = '#2ecc71';
+        feedback.innerText = (triesLeft === MAX_TRIES) ? 'Chính xác! Bé giỏi quá! 🎉' : 'Đúng rồi! Giỏi lắm! 🎉';
+        if (triesLeft === MAX_TRIES) score++;      // đúng ngay lần đầu: 1 điểm
+        else score += 0.5;                          // đúng ở lần 2: nửa điểm
+        playCorrectSound();
+        launchConfetti();
+        setTimeout(nextQuestion, 1600);
+    } else {
+        triesLeft--;
+        btn.classList.add('wrong');
+        btn.disabled = true;
+        playWrongSound();
+        if (triesLeft > 0) {
+            feedback.style.color = '#e67e22';
+            feedback.innerText = 'Chưa đúng, thử lại nào! 💪';
+            document.getElementById('tries-info').innerText = `Bé còn ${triesLeft} lần trả lời.`;
+        } else {
+            allBtns.forEach(b => { b.disabled = true; if (b.dataset.opt === q.correct_option) b.classList.add('correct'); });
+            feedback.style.color = '#e74c3c';
+            feedback.innerText = 'Hết lượt rồi, đáp án đúng đã hiện ra nhé! ❤️';
+            document.getElementById('tries-info').innerText = '';
+            setTimeout(nextQuestion, 2000);
         }
+    }
+}
 
-        function checkAnswer(selected) {
-            const q = questions[currentIdx];
-            const feedback = document.getElementById('feedback');
-            
-            document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
+function nextQuestion() {
+    qIdx++;
+    if (qIdx >= quizSet.length) { finishQuiz(); return; }
+    showQuestion();
+}
 
-            if (selected === q.correct_option) {
-                feedback.style.color = '#2ecc71';
-                feedback.innerText = 'Đúng rồi! Bé giỏi quá! 🎈🎉';
-                score++;
-            } else {
-                feedback.style.color = '#e74c3c';
-                feedback.innerText = 'Chưa đúng rồi bé ơi, cố gắng câu sau nhé! ❤️';
-            }
+function quitQuiz() {
+    if (confirm('Thoát bài kiểm tra? Kết quả sẽ không được lưu.')) location.href = 'index.html';
+}
 
-            setTimeout(() => {
-                currentIdx++;
-                showQuestion();
-            }, 1500);
-        }
-    </script>
+/* ---------- RESULT ---------- */
+function finishQuiz() {
+    document.getElementById('progress-bar').style.width = '100%';
+    const total = quizSet.length;
+    const pct = Math.round(score / total * 100);
+    const scoreText = (Number.isInteger(score) ? score : score.toFixed(1));
+
+    let emoji = '🎉', title = 'Hoàn thành!';
+    if (pct >= 90) { emoji = '🏆'; title = 'Tuyệt vời! Bé là nhà vô địch!'; }
+    else if (pct >= 70) { emoji = '🌟'; title = 'Giỏi lắm bé ơi!'; }
+    else if (pct >= 50) { emoji = '👍'; title = 'Khá tốt, cố thêm nhé!'; }
+    else { emoji = '💪'; title = 'Cố gắng luyện tập thêm nào!'; }
+
+    document.getElementById('result-emoji').innerText = emoji;
+    document.getElementById('result-title').innerText = title;
+    document.getElementById('result-score').innerHTML = `Điểm: <b style="color:#2ecc71">${scoreText} / ${total}</b> (${pct}%)`;
+    document.getElementById('result-detail').innerText =
+        `Độ khó: ${labelLevel(quizMeta.level)} • Bài: ${quizMeta.lesson === 'all' ? 'Tất cả' : quizMeta.lesson}`;
+
+    const record = {
+        time: new Date().toLocaleString('vi-VN'),
+        score: scoreText, total, percent: pct,
+        level: labelLevel(quizMeta.level),
+        lesson: quizMeta.lesson === 'all' ? 'Tất cả' : quizMeta.lesson
+    };
+    saveHistory(record);
+    sendToSheet(record);
+
+    if (pct >= 70) launchConfetti(true);
+    show('screen-result');
+}
+</script>
 </body>
 </html>
