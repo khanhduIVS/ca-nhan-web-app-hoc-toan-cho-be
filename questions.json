@@ -1,9 +1,137 @@
 [
     {
-        "question": "Con gì kêu 'mèo méo meo' hả bé?",
-        "option_a": "Con chó",
-        "option_b": "Con mèo",
-        "option_c": "Con thỏ",
-        "correct_option": "option_b"
+        "question": "2 + 3 = ?",
+        "option_a": "4",
+        "option_b": "5",
+        "option_c": "6",
+        "correct_option": "option_b",
+        "level": "easy",
+        "lesson": "Bài 1: Phép cộng trong phạm vi 10"
+    },
+    {
+        "question": "1 + 4 = ?",
+        "option_a": "5",
+        "option_b": "6",
+        "option_c": "3",
+        "correct_option": "option_a",
+        "level": "easy",
+        "lesson": "Bài 1: Phép cộng trong phạm vi 10"
+    },
+    {
+        "question": "6 + 2 = ?",
+        "option_a": "7",
+        "option_b": "9",
+        "option_c": "8",
+        "correct_option": "option_c",
+        "level": "easy",
+        "lesson": "Bài 1: Phép cộng trong phạm vi 10"
+    },
+    {
+        "question": "5 + 5 = ?",
+        "option_a": "10",
+        "option_b": "11",
+        "option_c": "9",
+        "correct_option": "option_a",
+        "level": "easy",
+        "lesson": "Bài 1: Phép cộng trong phạm vi 10"
+    },
+    {
+        "question": "7 - 3 = ?",
+        "option_a": "3",
+        "option_b": "4",
+        "option_c": "5",
+        "correct_option": "option_b",
+        "level": "easy",
+        "lesson": "Bài 2: Phép trừ trong phạm vi 10"
+    },
+    {
+        "question": "9 - 4 = ?",
+        "option_a": "6",
+        "option_b": "4",
+        "option_c": "5",
+        "correct_option": "option_c",
+        "level": "easy",
+        "lesson": "Bài 2: Phép trừ trong phạm vi 10"
+    },
+    {
+        "question": "10 - 6 = ?",
+        "option_a": "4",
+        "option_b": "3",
+        "option_c": "5",
+        "correct_option": "option_a",
+        "level": "easy",
+        "lesson": "Bài 2: Phép trừ trong phạm vi 10"
+    },
+    {
+        "question": "8 - 8 = ?",
+        "option_a": "1",
+        "option_b": "0",
+        "option_c": "8",
+        "correct_option": "option_b",
+        "level": "easy",
+        "lesson": "Bài 2: Phép trừ trong phạm vi 10"
+    },
+    {
+        "question": "12 + 15 = ?",
+        "option_a": "27",
+        "option_b": "26",
+        "option_c": "28",
+        "correct_option": "option_a",
+        "level": "hard",
+        "lesson": "Bài 3: Phép cộng có hai chữ số"
+    },
+    {
+        "question": "24 + 18 = ?",
+        "option_a": "41",
+        "option_b": "42",
+        "option_c": "43",
+        "correct_option": "option_b",
+        "level": "hard",
+        "lesson": "Bài 3: Phép cộng có hai chữ số"
+    },
+    {
+        "question": "35 - 17 = ?",
+        "option_a": "18",
+        "option_b": "19",
+        "option_c": "17",
+        "correct_option": "option_a",
+        "level": "hard",
+        "lesson": "Bài 4: Phép trừ có hai chữ số"
+    },
+    {
+        "question": "50 - 23 = ?",
+        "option_a": "26",
+        "option_b": "28",
+        "option_c": "27",
+        "correct_option": "option_c",
+        "level": "hard",
+        "lesson": "Bài 4: Phép trừ có hai chữ số"
+    },
+    {
+        "question": "3 x 4 = ?",
+        "option_a": "12",
+        "option_b": "7",
+        "option_c": "14",
+        "correct_option": "option_a",
+        "level": "hard",
+        "lesson": "Bài 5: Phép nhân cơ bản"
+    },
+    {
+        "question": "6 x 2 = ?",
+        "option_a": "8",
+        "option_b": "12",
+        "option_c": "10",
+        "correct_option": "option_b",
+        "level": "hard",
+        "lesson": "Bài 5: Phép nhân cơ bản"
+    },
+    {
+        "question": "8 : 2 = ?",
+        "option_a": "3",
+        "option_b": "2",
+        "option_c": "4",
+        "correct_option": "option_c",
+        "level": "hard",
+        "lesson": "Bài 6: Phép chia cơ bản"
     }
 ]
